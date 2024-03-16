@@ -8,7 +8,9 @@ namespace Sales.Application.Dtos.Product
 {
     public class ProductsDtoRemove : ProductsDtoBase
     {
-        public bool Eliminado {  get; set; }
+        public bool Eliminado { get; set; }
         public int? ChangeUser { get; set; }
+        public int? IdUsuarioElimino {get;set;}
+        public DateTime? FechaElimino { get; set; }
     }
 }

@@ -8,5 +8,8 @@ namespace Sales.Application.Dtos.Product
 {
     public class ProductsDtoUpdate : ProductsDtoBase
     {
+        public DateTime? FechaMod {  get; set; }    
+        public int IdUsuarioMod {  get; set; }
+        public int Id { get;}
     }
 }

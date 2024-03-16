@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Dtos.Product
 {
-    public class ProductsDtoGetAll
+    public class ProductsDtoGetAll : ProductsDtoBase
     {
         public int CreationUser { get; set; }
 
