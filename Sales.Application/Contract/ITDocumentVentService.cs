@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Contract
 {
-    public interface TDocumentVentService : IBaseServices<TDocumentDtoAdd, TDocumentDtoUpdate, TDocumentRemoveDto >
+    public interface ITDocumentVentService : IBaseServices<TDocumentDtoAdd, TDocumentDtoUpdate, TDocumentRemoveDto >
     {
         object GetTDocumentByTDocumentID(int TDocumentID);
     }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Dtos.TDocumentVenta
 {
-    public class TDocumentDtoUpdate : TDocumentDtoBase 
+    public class TDocumentDtoUpdate : TDocumentDtoBase
     {
-
+        public DateTime? FechaMod { get; internal set; }
+        public int? ChanceUser { get; internal set; }
     }
 }

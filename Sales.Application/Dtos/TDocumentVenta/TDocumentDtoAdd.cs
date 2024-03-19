@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Dtos.TDocumentVenta
 {
-     public class TDocumentDtoAdd
+     public class TDocumentDtoAdd : TDocumentDtoBase
     {
     }
 }

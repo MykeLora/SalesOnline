@@ -9,6 +9,7 @@ namespace Sales.Application.Dtos.TDocumentVenta
     public class TDocumentRemoveDto : TDocumentDtoBase
     {
         public bool Eliminado { get; set; } = false;
-
+        public int? IdUsuarioElimino { get; internal set; }
+        public DateTime? FechaElimino { get; internal set; }
     }
 }
