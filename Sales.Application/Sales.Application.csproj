@@ -10,8 +10,4 @@
     <ProjectReference Include="..\Sales.Infraestructure\Sales.Infraestructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-
 </Project>

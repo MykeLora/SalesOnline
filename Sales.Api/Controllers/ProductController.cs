@@ -39,7 +39,7 @@ namespace Sales.Api.Controllers
         }
 
 
-        [HttpGet("GetCProductById")]
+        [HttpGet("GetdProductById")]
         public IActionResult Get(int id)
         {
             var product = this.productRepository.GetEntity(id);
