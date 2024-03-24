@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Contract
 {
-    public interface ICategoryService: IBaseServices<CategoryDtoAdd, CategoryDtoUpdate,CategoryRemoveDto >
+    public interface ICategoryService : IBaseServices<CategoryDtoAdd, CategoryDtoUpdate, CategoryRemoveDto, CategoryDtoGetAll>
     {
 
-        object GetCategoryByCategoryID(int categoryID);
     }
 }

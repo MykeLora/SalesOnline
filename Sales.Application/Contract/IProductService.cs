@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Contract
 {
-    public interface IProductService : IBaseServices<ProductsDtoAdd, ProductsDtoUpdate, ProductsDtoRemove >
+    public interface IProductService : IBaseServices<ProductsDtoAdd, ProductsDtoUpdate, ProductsDtoRemove, ProductsDtoGetAll>
     {
-        object GetProductByProductID(int productID);
+        
     }
 }

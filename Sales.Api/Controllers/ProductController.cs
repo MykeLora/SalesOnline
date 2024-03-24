@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.Categoria;
-using Sales.Api.Dtos.Product;
-using Sales.Api.Models;
-using Sales.Domain.Entites;
-using Sales.Infraestructure.Interfaces;
+using Sales.Application.Contract;
+using Sales.Application.Dtos.Product;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,98 +10,78 @@ namespace Sales.Api.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductoRepository productRepository;
+        private readonly IProductService productService;
 
-        public ProductController(IProductoRepository productRepository)
+        public ProductController(IProductService productService)
         {
-            this.productRepository = productRepository;
+            this.productService = productService;
         }
 
         [HttpGet("GetProducts")]
         public IActionResult Get()
         {
-            var products = this.productRepository.GetEntities().Select(cd => new ProductAddModel()
+            var result = this.productService.GetAll();
+
+            if (!result.Success)
             {
-                ProductId = cd.id,
-                CreateDate = cd.FechaRegistro,
-                Description = cd.Descripcion,
-                Name = cd.Marca,
-                Price = cd.Precio,
-                CategoryId = cd.id
-
-            });
-
-            return Ok(products);
-
+                return BadRequest(result);
+            }
+            return Ok(result.Data);
+            
         }
 
-
-        [HttpGet("GetdProductById")]
+        // GET api/<ProductController>/5
+        [HttpGet("GetProductById")]
         public IActionResult Get(int id)
         {
-            var product = this.productRepository.GetEntity(id);
+            var result = this.productService.Get(id);
 
-            ProductAddModel productGetModel = new ProductAddModel()
+            if (!result.Success)
             {
-                ProductId = product.id,
-                CategoryId = product.id,
-                CreateDate = product.FechaRegistro,
-                Description = product.Descripcion,
-                Name = product.Marca,
-                Price = product.Precio,
-
-            };
-
-            return Ok(productGetModel);
+                return BadRequest(result);
+            }
+            return Ok(result.Data);
+            
         }
 
+        // POST api/<ProductController>
         [HttpPost("SaveProduct")]
-        public IActionResult Post([FromBody] ProductAddDto productAddModel)
+        public IActionResult Post([FromBody] ProductsDtoAdd productsDtoAdd)
         {
-            this.productRepository.Save(new Sales.Domain.Entites.Producto()
-            {
-                id = productAddModel.ProductId,
-                Marca = productAddModel.Marca,
-                Precio = productAddModel.Precio,
-                FechaRegistro = productAddModel.ChangeDate,
-                IdUsuarioCreacion = productAddModel.UserId,
-                Descripcion = productAddModel.Descripcion,
-                IdCategoria = productAddModel.IdCategoria,
-            });
+            var result = this.productService.Save(productsDtoAdd);
 
-            return Ok("Producto guardado correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result.Data);
+        }
+
+        // PUT api/<ProductController>/5
+        [HttpPut("SaveProduct")]
+        public IActionResult Put( [FromBody] ProductsDtoUpdate productsDtoUpdate)
+        {
+            var result = this.productService.Update(productsDtoUpdate);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result.Data);
 
         }
 
-
-        [HttpPut("UpdateProduct")]
-        public IActionResult Put([FromBody] ProductUpdateDto productUpdte)
-        {
-            this.productRepository.Update(new Producto()
-            {
-                id = productUpdte.ProductId,
-                Marca = productUpdte.Marca,
-                FechaMod = productUpdte.ChangeDate,
-                IdUsuarioMod = productUpdte.UserId,
-                Descripcion = productUpdte.Descripcion,
-            });
-
-            return Ok("Producto actualizado correctamente.");
-        }
-
-
+        // DELETE api/<ProductController>/5
         [HttpDelete("RemoveProduct")]
-        public IActionResult Remove([FromBody] ProductRemoveDto productRemove)
+        public IActionResult Delete(ProductsDtoRemove productsDtoRemove)
         {
+            var result = this.productService.Remove(productsDtoRemove);
 
-            this.productRepository.Remove(new Producto()
+            if (!result.Success)
             {
-                id = productRemove.ProductId,
-                FechaElimino = productRemove.ChangeDate,
-                IdUsuarioElimino = productRemove.UserId
-            });
-
-            return Ok("Producto eliminado correctamente.");
+                return BadRequest(result);
+            }
+            return Ok(result.Data);
         }
     }
 }

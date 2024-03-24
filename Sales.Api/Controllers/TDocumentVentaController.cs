@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.Product;
-using Sales.Api.Dtos.TDocumentVenta;
-using Sales.Api.Models;
-using Sales.Domain.Entites;
-using Sales.Infraestructure.Interfaces;
-using Sales.Infraestructure.Repositories;
+using Sales.Api.Models.Modules.CategoryModule;
+using Sales.Application.Contract;
+using Sales.Application.Dtos.TDocumentVenta;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,90 +11,88 @@ namespace Sales.Api.Controllers
     [ApiController]
     public class TDocumentVentaController : ControllerBase
     {
-        private readonly ITipoDocumentoVentaRepository TipoDocumentoVentaRepository;
 
-        public TDocumentVentaController(ITipoDocumentoVentaRepository TipoDocumentoVentaRepository)
+
+        private readonly ITDocumentVentService tDocumentVentService;
+
+        public TDocumentVentaController(ITDocumentVentService documentVentService)
         {
-            this.TipoDocumentoVentaRepository = TipoDocumentoVentaRepository;
+            this.tDocumentVentService = documentVentService;
         }
 
-        [HttpGet("GetDocumentsVenta")]
+        [HttpGet]
         public IActionResult Get()
         {
-            var documents = this.TipoDocumentoVentaRepository.GetEntities().Select(cd => new TDocumentVentaAddModel()
+            var result = this.tDocumentVentService.GetAll();
+
+            if (result == null)
             {
-                TDocumentVentaId = cd.id,
-                CreateDate = cd.FechaRegistro,
-                Descripcion = cd.Descripcion,
+                return NotFound("No documents found.");
+            }
 
-            }); 
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
 
-            return Ok(documents);
-
+            return Ok(result.Data);
         }
+    
 
-
-        [HttpGet("GetDocumentVentaById")]
+        [HttpGet("GetTDocumentById")]
         public IActionResult Get(int id)
         {
-            var documentoVenta = this.TipoDocumentoVentaRepository.GetEntity(id);
+            var result = this.tDocumentVentService.Get(id);
 
-            TDocumentVentaAddModel documentGetModel = new TDocumentVentaAddModel()
+            if (!result.Success)
             {
-                TDocumentVentaId = documentoVenta.id,
-                Descripcion = documentoVenta.Descripcion,
-                CreateDate = documentoVenta.FechaRegistro,
-                EsActivo = documentoVenta.EsActivo
-
-            };
-
-            return Ok(documentGetModel);
+                return BadRequest(result);
+            }
+            return Ok(result.Data);
         }
 
-        [HttpPost("SaveDocumentVentas")]
-        public IActionResult Post([FromBody] TDocumentVentaAddDto tdocumentventaAddModel)
+        // POST api/<TDocumentVentaController>
+        [HttpPost("Save TDocumentVenta")]
+        public IActionResult Post([FromBody] TDocumentDtoAdd documentDtoAdd)
         {
-            this.TipoDocumentoVentaRepository.Save(new Sales.Domain.Entites.TipoDocumentoVenta()
+            var result = this.tDocumentVentService.Save(documentDtoAdd);
+
+            if (!result.Success)
             {
-                id = tdocumentventaAddModel.UserId,
-                FechaRegistro = tdocumentventaAddModel.ChangeDate,
-                IdUsuarioCreacion = tdocumentventaAddModel.UserId,
-                Descripcion = tdocumentventaAddModel.Descripcion
+                return BadRequest(result);
+            }
 
-            });
-
-            return Ok("Tipo Documento de Venta guardado correctamente.");
+            return Ok(result);
 
         }
 
-
-        [HttpPut("UpdateDocumentVenta")]
-        public IActionResult Put([FromBody] TDocumentVentaUpdateDto documentUpdte)
+        // PUT api/<TDocumentVentaController>/5
+        [HttpPut("UpdateTDocumentVenta")]
+        public IActionResult Put([FromBody] TDocumentDtoUpdate documentDtoUpdate)
         {
-            this.TipoDocumentoVentaRepository.Update(new TipoDocumentoVenta()
-            {
-                id = documentUpdte.TDocumentId,
-                FechaMod = documentUpdte.ChangeDate,
-                IdUsuarioMod = documentUpdte.UserId,
-                Descripcion = documentUpdte.Descripcion,
-            });
+            var result = this.tDocumentVentService.Update(documentDtoUpdate);
 
-            return Ok("Tipo Documento de Venta actualizado correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
-
-        [HttpDelete("RemoveProduct")]
-        public IActionResult Remove([FromBody] TDocumentVentaRemoveDto documentRemove)
+        // DELETE api/<TDocumentVentaController>/5
+        [HttpDelete("RemoveTDocumentVenta")]
+        public IActionResult Delete(TDocumentRemoveDto documentRemoveDto)
         {
+            var result = this.tDocumentVentService.Remove(documentRemoveDto);
 
-            this.TipoDocumentoVentaRepository.Remove(new TipoDocumentoVenta()
+            if (!result.Success)
             {
-                id = documentRemove.TDocumentVentaId,
-                FechaElimino = documentRemove.ChangeDate,
-                IdUsuarioElimino = documentRemove.UserId
-            });
+                return BadRequest(result);
+            }
 
-            return Ok("Tipo Documento de Venta eliminado correctamente.");
+            return Ok(result);
+
         }
     }
 }

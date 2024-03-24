@@ -1,277 +1,226 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Sales.Application.Contract;
 using Sales.Application.Core;
-using Sales.Application.Dtos.Category;
 using Sales.Application.Dtos.Product;
-using Sales.Application.Models.Category;
-using Sales.Application.Models.Product;
-using Sales.Application.Reponse;
 using Sales.Domain.Entites;
 using Sales.Infraestructure.Interfaces;
-using Sales.Infraestructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sales.Application.Service
 {
     public class ProductService : IProductService
     {
         private readonly ILogger<ProductService> logger;
-        private readonly ProductRepository productRepository;
-        private readonly IConfiguration configuration;
+        private readonly IProductoRepository productRepository;
 
-
-        public ProductService(IProductoRepository productRepository, ILogger<ProductService> logger, IConfiguration configuration)
+        public ProductService(ILogger<ProductService> logger,
+                               IProductoRepository productRepository)
         {
-
-            this.productRepository = (ProductRepository?)productRepository;
             this.logger = logger;
-            this.configuration = configuration;
-
+            this.productRepository = productRepository;
         }
 
-
-        // validaciones bases para ser reutilizadas por los metodos //
-        private ServicesResult ValidateProductCommon(ProductsDtoBase dto)
+        public ServicesResult<ProductsDtoGetAll> Get(int Id)
         {
-            ServicesResult result = new ServicesResult();
+            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
 
+            try
+            {
+                var product = this.productRepository.GetEntity(Id);
 
-            if (string.IsNullOrEmpty(dto.Marca))
+                if (product != null)
+                {
+                    result.Data = new ProductsDtoGetAll()
+                    {
+                        id = product.id,
+                        Description = product.Descripcion,
+                        Marca = product.Marca,
+                        CreateDate = product.FechaRegistro
+                    };
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "El producto no existe.";
+                }
+            }
+            catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "El producto es requerido.";
-                return result;
+                result.Message = "Error al obtener el producto.";
+                this.logger.LogError(result.Message, ex.ToString());
             }
-            if (dto.Marca.Length > 15)
-            {
-                result.Success = false;
-                result.Message = "El nombre del producto debe tener 15 carácteres.";
-                return result;
-            }
-            if (string.IsNullOrEmpty(dto.Description))
-            {
-                result.Success = false;
-                result.Message = "El producto es requerido.";
-                return result;
-
-            }
-            if (dto.Description.Length > 200)
-            {
-                result.Success = false;
-                result.Message = "La descripción del producto debe tener 200 carácteres.";
-                return result;
-            }
-
-            if (this.productRepository.Exists(ca => ca.Marca == dto.Marca))
-            {
-                result.Success = false;
-                result.Message = $"El producto {dto.Marca} ya existe.";
-                return result;
-            }
-
-            this.productRepository.Save(new Domain.Entites.Producto()
-            {
-                Marca = dto.Marca,
-                FechaRegistro = dto.CreateDate,
-                id = dto.ProductId,
-                Descripcion = dto.Description,
-                Precio = dto.Price,
-                Stock  = dto.Stock,
-
-              
-            });
-
 
             return result;
         }
 
-
-        public ServicesResult GetAll()
+        public ServicesResult<List<ProductsDtoGetAll>> GetAll()
         {
-            ServicesResult result = new ServicesResult();
+            ServicesResult<List<ProductsDtoGetAll>> result = new ServicesResult<List<ProductsDtoGetAll>>();
 
             try
             {
-                var product = this.productRepository.GetEntities().Select(
+                var products = this.productRepository.GetEntities().Select(
                     products => new ProductsDtoGetAll()
                     {
-                        ProductID = products.id,
-                        CreationDate = products.FechaRegistro,
-                        CreationUser = products.IdUsuarioCreacion,
-                        CategoryID = products.id,
-                        Marca = products.Marca,
-                        Stock = products.Stock
+                        id = products.id,
+                        Price = products.Precio,
+                        Stock = products.Stock,
+                        Marca = products.Marca
 
                     }).ToList();
+
+                result.Data = products;
+
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Error al obtener los productos";
+                result.Message = "Error al obtener los productos.";
+                this.logger.LogError(result.Message, ex.ToString());
+
+            }
+
+            return result;
+        }
+
+        public ServicesResult<ProductsDtoGetAll> Remove(ProductsDtoRemove RemoveDto)
+        {
+            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
+
+            try
+            {
+                this.productRepository.Remove(new Producto()
+                {
+                    id = RemoveDto.id,
+                    IdUsuarioElimino = RemoveDto.IdUsuarioElimino,
+                    FechaElimino = RemoveDto.FechaElimino
+                });
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Error al eliminar el producto.";
                 this.logger.LogError(result.Message, ex.ToString());
             }
 
             return result;
         }
 
-        public ServicesResult GetById(int id)
+        public ServicesResult<ProductsDtoGetAll> Save(ProductsDtoAdd AddDto)
         {
-            ServicesResult result = new ServicesResult();
+            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
 
             try
             {
-                var products = this.productRepository.GetEntity(id);
+                var validationResult = this.IsValid(AddDto);
 
-                result.Data = new ProductGetModel()
+                if (!validationResult.Success)
                 {
-                    ProductId = products.id,
-                    Description = products.Descripcion,
-                    Name = products.Marca,
-                    CreateDate = products.FechaRegistro
-                };
+                    result.Message = validationResult.Message;
+                    return result;
+                }
+
+                this.productRepository.Save(new Producto()
+                {
+                    IdProducto = AddDto.id,
+                    Descripcion = AddDto.Description,
+                    IdUsuarioCreacion = AddDto.IdUsuarioCreacion,
+                    Marca = AddDto.Marca,
+                    Precio = AddDto.Price,
+                    Stock = AddDto.Stock,
+                    id = AddDto.CategoryId
+                });
             }
             catch (Exception ex)
             {
                 result.Success = false;
-                result.Message = "Error al obtener el producto";
+                result.Message = "Error al guardar el producto.";
                 this.logger.LogError(result.Message, ex.ToString());
             }
+
             return result;
         }
 
-        public ServicesResult Remove(ProductsDtoRemove dtoRemove)
+        public ServicesResult<ProductsDtoGetAll> Update(ProductsDtoUpdate UpdteDto)
         {
-            ServicesResult result = new ServicesResult();
-            ServicesResult validation = ValidateProductCommon(dtoRemove);
-
-            if (!validation.Success)
-            {
-                result.Message = validation.Message;
-                result.Success = false;
-                return result;
-
-            }
+            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
 
             try
             {
-                Producto producto = new Producto()
-   
+                var validationResult = this.IsValid(UpdteDto);
+
+                if (!validationResult.Success)
                 {
-                    id = dtoRemove.ProductId,
-                    Eliminado = dtoRemove.Eliminado,
-                    IdUsuarioElimino = dtoRemove.IdUsuarioElimino,
-                    FechaElimino = dtoRemove.FechaElimino,
+                    result.Message = validationResult.Message;
+                    return result;
+                }
 
-                };
+                var product = this.productRepository.GetEntity(UpdteDto.Id);
 
-                this.productRepository.Remove(producto);
-
-                result.Message = "El producto ha sido removido";
-
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = "Error al eliminar el producto";
-                this.logger.LogError(result.Message, ex.ToString());
-
-            }
-            return result;
-        }
-
-        public ServicesResult Save(ProductsDtoAdd dtoAdd)
-        {
-            ProductResponse result = new ProductResponse();
-
-            ServicesResult validation = ValidateProductCommon(dtoAdd);
-
-            if (!validation.Success)
-            {
-                result.Message = validation.Message;
-                result.Success = false;
-                return result;
-            }
-            try
-            {
-                Producto product = new Producto()
+                if (product == null)
                 {
-                    Descripcion = dtoAdd.Description,
-                    IdUsuarioCreacion = dtoAdd.IdUsuarioCreacion,
-                    Marca = dtoAdd.Marca,
-                    Precio = dtoAdd.Price
+                    result.Success = false;
+                    result.Message = "El producto no existe.";
+                    return result;
+                }
 
-                };
+                product.Descripcion = UpdteDto.Description;
+                product.Marca = UpdteDto.Marca;
+                product.FechaMod = UpdteDto.FechaMod;
+                product.IdUsuarioMod = UpdteDto.IdUsuarioMod;
 
-                this.productRepository.Save(product);
-
-                result.Message = this.configuration["MensajesProductSuccess:AddSuccessMessage"];
-                result.ProductId = product.id;
-
-            }
-            catch (Exception ex)
-            {
-
-                result.Success = false;
-                result.Message = this.configuration["MensajeProductSuccess:AddErrorMessage"];
-                this.logger.LogError(result.Message, ex.ToString());
-
-            }
-            return result;
-
-
-        }
-
-        public ServicesResult Update(ProductsDtoUpdate dtoUpdate)
-        {
-            ProductResponse result = new ProductResponse();
-
-            // validaciones reutilizadas //
-            ServicesResult validation = ValidateProductCommon(dtoUpdate);
-            if (!validation.Success)
-            {
-                result.Message = validation.Message;
-                result.Success = false;
-                return result;
-            }
-            try
-            {
-
-
-                Producto product = new Producto()
-                {
-                    id = dtoUpdate.ProductId,
-                    FechaRegistro = dtoUpdate.CreateDate,
-                    IdUsuarioCreacion = dtoUpdate.ProductId,
-                    Marca = dtoUpdate.Marca,
-                    Descripcion = dtoUpdate.Description,
-                    FechaMod = dtoUpdate.FechaMod,
-                    IdUsuarioMod = dtoUpdate.IdUsuarioMod,
-                    
-                };
                 this.productRepository.Update(product);
-                result.Message = this.configuration["MensajeProductSuccess:UpdateSuccessMessage"];
-
-
             }
             catch (Exception ex)
             {
-
                 result.Success = false;
-                result.Message = this.configuration["MensajeProductSuccess:UpdateErrorMessage"];
+                result.Message = "Error al actualizar el producto.";
                 this.logger.LogError(result.Message, ex.ToString());
-
             }
+
             return result;
         }
 
-        public object GetProductByProductID(int productID)
+        private ServicesResult<string> IsValid(ProductsDtoBase productsDtoBase)
         {
-            throw new NotImplementedException();
+            ServicesResult<string> result = new ServicesResult<string>();
+
+            if (string.IsNullOrEmpty(productsDtoBase.Marca))
+            {
+                result.Success = false;
+                result.Message = "El nombre del producto es requerido.";
+                return result;
+            }
+
+            if (productsDtoBase.Marca.Length > 15)
+            {
+                result.Success = false;
+                result.Message = "El nombre del producto debe tener máximo 15 caracteres.";
+                return result;
+            }
+
+            if (string.IsNullOrEmpty(productsDtoBase.Description))
+            {
+                result.Success = false;
+                result.Message = "La descripción del producto es requerida.";
+                return result;
+            }
+
+            if (productsDtoBase.Description.Length > 200)
+            {
+                result.Success = false;
+                result.Message = "La descripción del producto debe tener máximo 200 caracteres.";
+                return result;
+            }
+
+            if (this.productRepository.Exists(ca => ca.Marca == productsDtoBase.Marca))
+            {
+                result.Success = false;
+                result.Message = $"El producto {productsDtoBase.Marca} ya existe.";
+                return result;
+            }
+
+            return result;
         }
     }
 }

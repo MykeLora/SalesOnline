@@ -1,12 +1,10 @@
 ﻿namespace Sales.Api.Models
 {
-    public class TDocumentVentaAddModel
+    public class TDocumentVentaBaseModel
     {
         public int? TDocumentVentaId { get; set; }
         public string? Descripcion { get; set; }
         public bool? EsActivo { get; set; }
-        public int CreateUser { get; set; }
-        public DateTime CreateDate { get; set; }
 
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Core
 {
-    public class ServicesResult
+    public class ServicesResult<TData>
     {
         public ServicesResult() 
         {

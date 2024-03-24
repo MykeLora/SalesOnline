@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Core
 {
-    public interface IBaseServices<TDtoAddModel, TDtoUpdateModel, TDtoRemove>
+    public interface IBaseServices<TDtoAdd, TDtoUpdate, TDtoRemove, TModel>
     {
-        ServicesResult GetAll();
-        ServicesResult GetById(int id);
-        ServicesResult Save(TDtoAddModel dtoAdd);
-        ServicesResult Update(TDtoUpdateModel dtoUpdate);
-        ServicesResult Remove(TDtoRemove dtoRemove);
+        ServicesResult<List<TModel>> GetAll();
+        ServicesResult<TModel> Get(int Id);
+        ServicesResult<TModel> Save(TDtoAdd AddDto);
+        ServicesResult<TModel> Update(TDtoUpdate UpdteDto);
+        ServicesResult<TModel> Remove(TDtoRemove RemoveDto);
     }
 }

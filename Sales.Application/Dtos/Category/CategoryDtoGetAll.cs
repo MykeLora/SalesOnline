@@ -8,6 +8,6 @@ namespace Sales.Application.Dtos.Category
 {
     public class CategoryDtoGetAll : CategoryDtoBase
     {
-
+        public int CategoryId { get; set; }
     }
 }

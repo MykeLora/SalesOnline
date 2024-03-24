@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Sales.Application.Contract;
+using Sales.Application.Service;
 using Sales.Infraestructure.Context;
 using Sales.Infraestructure.Interfaces;
 using Sales.Infraestructure.Repositories;
@@ -16,6 +18,15 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductoRepository, ProductRepository>();
 
 builder.Services.AddScoped<ITipoDocumentoVentaRepository, TipoDocumentoVentaRepository>();
+
+
+//App services
+
+builder.Services.AddTransient<ICategoryService, CategoryNewService>();
+
+builder.Services.AddTransient<IProductService, ProductService>();
+
+builder.Services.AddTransient<ITDocumentVentService, TDocumentServiceNew>();
 
 // Add services to the container.
 

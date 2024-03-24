@@ -8,7 +8,7 @@ namespace Sales.Application.Dtos.Product
 {
     public abstract class ProductsDtoBase 
     {
-        public int ProductId { get; set; }
+        public int id { get; set; }
         public string? Marca { get; set; }
         public int CategoryId { get; set; }
         public decimal? Price { get; set; }

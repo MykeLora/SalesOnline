@@ -1,100 +1,85 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sales.Api.Dtos.Categoria;
-using Sales.Api.Models;
-using Sales.Domain.Entites;
-using Sales.Infraestructure.Interfaces;
+using Sales.Application.Contract;
+using Sales.Application.Dtos.Category;
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace shopping.Api.Controllers
+namespace Sales.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository categoryRepository;
+        private readonly ICategoryService categoryService;
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(ICategoryService categoryService)
         {
-            this.categoryRepository = categoryRepository;
+            this.categoryService = categoryService;
         }
 
         [HttpGet("GetCategories")]
         public IActionResult Get()
         {
-            var categories = this.categoryRepository.GetEntities().Select(cd => new CategoryAddModel()
+            var result = this.categoryService.GetAll();
+
+            if (!result.Success)
             {
-                CategoryId = cd.id,
-                CreateDate = cd.FechaRegistro,
-                Description = cd.Descripcion,
-                Name = cd.nombre
+                return BadRequest(result);
+            }
 
-            });
-
-            return Ok(categories);
-
+            return Ok(result.Data);
         }
-
 
         [HttpGet("GetCategoryById")]
         public IActionResult Get(int id)
         {
-            var category = this.categoryRepository.GetEntity(id);
+            var result = this.categoryService.Get(id);
 
-            CategoryAddModel categoryGetModel = new CategoryAddModel()
+            if (!result.Success)
             {
-                CategoryId = category.id,
-                CreateDate = category.FechaRegistro,
-                Description = category.Descripcion,
-                Name = category.nombre
-            };
+                return BadRequest(result);
+            }
 
-            return Ok(categoryGetModel);
+            return Ok(result.Data);
         }
 
         [HttpPost("SaveCategory")]
-        public IActionResult Post([FromBody] CategoriaAddDto categoryAddModel)
+        public IActionResult Post([FromBody] CategoryDtoAdd categoryAddModel)
         {
-            this.categoryRepository.Save(new Sales.Domain.Entites.Categoria()
+            var result = this.categoryService.Save(categoryAddModel);
+
+            if (!result.Success)
             {
-                nombre = categoryAddModel.Name,
-                FechaRegistro = categoryAddModel.ChangeDate,
-                IdUsuarioCreacion = categoryAddModel.UserId,
-                Descripcion = categoryAddModel.Description
-            });
+                return BadRequest(result);
+            }
 
-            return Ok("Categoria guardada correctamente.");
-
+            return Ok(result);
         }
-
 
         [HttpPut("UpdateCategory")]
-        public IActionResult Put([FromBody] CategoriaUpdateDto categoryUpdte)
+        public IActionResult Put([FromBody] CategoryDtoUpdate categoryUpdate)
         {
-            this.categoryRepository.Update(new Categoria()
-            {
-                id = categoryUpdte.CategoryId,
-                nombre = categoryUpdte.Name,
-                FechaMod = categoryUpdte.ChangeDate,
-                IdUsuarioMod = categoryUpdte.UserId,
-                Descripcion = categoryUpdte.Description,
-            });
+            var result = this.categoryService.Update(categoryUpdate);
 
-            return Ok("Categoria actualizada correctamente.");
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
-
         [HttpDelete("RemoveCategory")]
-        public IActionResult Remove([FromBody] CategoriaRemoveDto categoryRemove)
+        public IActionResult Delete([FromBody] CategoryRemoveDto categoryRemove)
         {
+            var result = this.categoryService.Remove(categoryRemove);
 
-            this.categoryRepository.Remove(new Categoria()
+            if (!result.Success)
             {
-                id = categoryRemove.CategoryId,
-                FechaElimino = categoryRemove.ChangeDate,
-                IdUsuarioElimino = categoryRemove.UserId
-            });
+                return BadRequest(result);
+            }
 
-            return Ok("Categoria eliminada correctamente.");
+            return Ok(result);
         }
     }
 }
