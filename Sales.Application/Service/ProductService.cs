@@ -31,7 +31,7 @@ namespace Sales.Application.Service
                 {
                     result.Data = new ProductsDtoGetAll()
                     {
-                        id = product.id,
+                        //id = product.id,
                         Description = product.Descripcion,
                         Marca = product.Marca,
                         CreateDate = product.FechaRegistro
@@ -62,7 +62,7 @@ namespace Sales.Application.Service
                 var products = this.productRepository.GetEntities().Select(
                     products => new ProductsDtoGetAll()
                     {
-                        id = products.id,
+                        //id = products.id,
                         Price = products.Precio,
                         Stock = products.Stock,
                         Marca = products.Marca
@@ -122,13 +122,13 @@ namespace Sales.Application.Service
 
                 this.productRepository.Save(new Producto()
                 {
-                    IdProducto = AddDto.id,
+                    id = AddDto.id,
                     Descripcion = AddDto.Description,
                     IdUsuarioCreacion = AddDto.IdUsuarioCreacion,
                     Marca = AddDto.Marca,
                     Precio = AddDto.Price,
                     Stock = AddDto.Stock,
-                    id = AddDto.CategoryId
+                    IdCategoria = AddDto.CategoryId
                 });
             }
             catch (Exception ex)

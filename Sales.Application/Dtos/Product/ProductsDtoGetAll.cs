@@ -9,13 +9,9 @@ namespace Sales.Application.Dtos.Product
     public class ProductsDtoGetAll : ProductsDtoBase
     {
         public int CreationUser { get; set; }
-
         public DateTime? ModifyDate { get; set; }
-
-        public int CategoryID { get; set; }
         public int? UserMod { get; set; }
         public DateTime CreationDate { get; set; }
 
-        public int ProductID { get; set; }
     }
 }

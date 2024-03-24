@@ -10,6 +10,6 @@ namespace Sales.Application.Dtos.Product
     {
         public DateTime? FechaMod {  get; set; }    
         public int IdUsuarioMod {  get; set; }
-        public int Id { get;}
+        public int Id { get; internal set; }
     }
 }
