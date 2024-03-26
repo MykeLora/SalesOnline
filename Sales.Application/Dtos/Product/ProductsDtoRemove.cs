@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Dtos.Product
 {
-    public class ProductsDtoRemove : ProductsDtoBase
+    public class ProductsDtoRemove : DtoBase
     {
-        public bool Eliminado { get; set; }
-        public int? ChangeUser { get; set; }
-        public int? IdUsuarioElimino {get;set;}
-        public DateTime? FechaElimino { get; set; }
+        public int ProductId {  get; set; }
     }
 }

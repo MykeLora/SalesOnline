@@ -6,18 +6,10 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Dtos.Category
 {
-    public class CategoryRemoveDto : CategoryDtoBase
+    public class CategoryRemoveDto : DtoBase
     {
-        public CategoryRemoveDto() 
-        {
-            this.Eliminado = false;
-            this.FechaElimino = DateTime.Now;
 
-        }  
-        public bool Eliminado { get; set; } 
         public int CategoryId { get; set; }
-        public int IdUsuarioElimino {  get; set; }
-        public DateTime FechaElimino { get; set; }
-
+   
     }
 }

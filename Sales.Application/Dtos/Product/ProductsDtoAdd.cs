@@ -8,6 +8,6 @@ namespace Sales.Application.Dtos.Product
 {
     public class ProductsDtoAdd : ProductsDtoBase
     {
-       public int IdUsuarioCreacion { get; set; }
+        public int ProductId { get; internal set; }
     }
 }

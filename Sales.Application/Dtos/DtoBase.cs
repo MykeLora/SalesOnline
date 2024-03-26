@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Dtos
 {
-    public abstract class DtoBase
+    public  class DtoBase
     {
-        public int ChanceUser { get; set; }
+        public int UserId { get; set; }
         public DateTime ChangeDate {  get; set; }
     }
 }

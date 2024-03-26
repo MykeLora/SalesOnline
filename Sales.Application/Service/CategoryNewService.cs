@@ -23,9 +23,9 @@ namespace Sales.Application.Service
             this.categoryRepository = categoryRepository;
         }
 
-        public ServicesResult<CategoryDtoGetAll> Get(int Id)
+        public ServicesResult<CategoryGetModel> Get(int Id)
         {
-            ServicesResult<CategoryDtoGetAll> result = new ServicesResult<CategoryDtoGetAll>();
+            ServicesResult<CategoryGetModel> result = new ServicesResult<CategoryGetModel>();
 
             try
             {
@@ -33,12 +33,12 @@ namespace Sales.Application.Service
 
                 if (category != null)
                 {
-                    result.Data = new CategoryDtoGetAll()
+                    result.Data = new CategoryGetModel
                     {
                         CategoryId = category.id,
                         Description = category.Descripcion,
                         Name = category.nombre,
-                        ChangeDate = category.FechaRegistro
+                        CreationDate = category.FechaRegistro
                     };
                 }
                 else
@@ -58,19 +58,19 @@ namespace Sales.Application.Service
 
         }
 
-        public ServicesResult<List<CategoryDtoGetAll>> GetAll()
+        public ServicesResult<List<CategoryGetModel>> GetAll()
         {
-            ServicesResult<List<CategoryDtoGetAll>> result = new ServicesResult<List<CategoryDtoGetAll>>();
+            ServicesResult<List<CategoryGetModel>> result = new ServicesResult<List<CategoryGetModel>>();
 
             try
             {
                 var categories = this.categoryRepository.GetEntities().Select(
-                    category => new CategoryDtoGetAll()
+                    category => new CategoryGetModel()
                     {
                         CategoryId = category.id,
                         Description = category.Descripcion,
                         Name = category.nombre,
-                        ChangeDate = category.FechaRegistro
+                        CreationDate = category.FechaRegistro
                     }).ToList();
 
                 result.Data = categories;
@@ -85,17 +85,17 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<CategoryDtoGetAll> Remove(CategoryRemoveDto RemoveDto)
+        public ServicesResult<CategoryGetModel> Remove(CategoryRemoveDto RemoveDto)
         {
-            ServicesResult<CategoryDtoGetAll> result = new ServicesResult<CategoryDtoGetAll>();
+            ServicesResult<CategoryGetModel> result = new ServicesResult<CategoryGetModel>();
 
             try
             {
                 this.categoryRepository.Remove(new Categoria()
                 {
                     id = RemoveDto.CategoryId,
-                    IdUsuarioElimino = RemoveDto.IdUsuarioElimino,
-                    FechaElimino = RemoveDto.FechaElimino
+                    IdUsuarioElimino = RemoveDto.UserId,
+                    FechaElimino = RemoveDto.ChangeDate
                 });
             }
             catch (Exception ex)
@@ -108,9 +108,9 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<CategoryDtoGetAll> Save(CategoryDtoAdd AddDto)
+        public ServicesResult<CategoryGetModel> Save(CategoryDtoAdd AddDto)
         {
-            ServicesResult<CategoryDtoGetAll> result = new ServicesResult<CategoryDtoGetAll>();
+            ServicesResult<CategoryGetModel> result = new ServicesResult<CategoryGetModel>();
 
             try
             {
@@ -125,9 +125,9 @@ namespace Sales.Application.Service
                 this.categoryRepository.Save(new Categoria()
                 {
                     Descripcion = AddDto.Description,
-                    IdUsuarioCreacion = AddDto.IdUsuarioCreacion,
+                    IdUsuarioCreacion = AddDto.UserId,
                     nombre = AddDto.Name,
-                    id = AddDto.CategoryId
+                    FechaRegistro = AddDto.ChangeDate
                 });
             }
             catch (Exception ex)
@@ -140,9 +140,9 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<CategoryDtoGetAll> Update(CategoryDtoUpdate UpdateDto)
+        public ServicesResult<CategoryGetModel> Update(CategoryDtoUpdate UpdateDto)
         {
-            ServicesResult<CategoryDtoGetAll> result = new ServicesResult<CategoryDtoGetAll>();
+            ServicesResult<CategoryGetModel> result = new ServicesResult<CategoryGetModel>();
 
             try
             {
@@ -166,7 +166,7 @@ namespace Sales.Application.Service
                 category.Descripcion = UpdateDto.Description;
                 category.nombre = UpdateDto.Name;
                 category.FechaMod = UpdateDto.ChangeDate;
-                category.IdUsuarioMod = UpdateDto.ChanceUser;
+                category.IdUsuarioMod = UpdateDto.UserId;
 
                 this.categoryRepository.Update(category);
             }

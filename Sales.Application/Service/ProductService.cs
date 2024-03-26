@@ -2,6 +2,7 @@
 using Sales.Application.Contract;
 using Sales.Application.Core;
 using Sales.Application.Dtos.Product;
+using Sales.Application.Models.Product;
 using Sales.Domain.Entites;
 using Sales.Infraestructure.Interfaces;
 
@@ -19,9 +20,9 @@ namespace Sales.Application.Service
             this.productRepository = productRepository;
         }
 
-        public ServicesResult<ProductsDtoGetAll> Get(int Id)
+        public ServicesResult<ProductGetModel> Get(int Id)
         {
-            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
+            ServicesResult < ProductGetModel > result = new ServicesResult<ProductGetModel>();
 
             try
             {
@@ -29,12 +30,12 @@ namespace Sales.Application.Service
 
                 if (product != null)
                 {
-                    result.Data = new ProductsDtoGetAll()
+                    result.Data = new  ProductGetModel()
                     {
-                        //id = product.id,
+                        ProductId = product.id,
                         Description = product.Descripcion,
                         Marca = product.Marca,
-                        CreateDate = product.FechaRegistro
+                        CreationDate = product.FechaRegistro
                     };
                 }
                 else
@@ -53,16 +54,16 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<List<ProductsDtoGetAll>> GetAll()
+        public ServicesResult<List<ProductGetModel>> GetAll()
         {
-            ServicesResult<List<ProductsDtoGetAll>> result = new ServicesResult<List<ProductsDtoGetAll>>();
+            ServicesResult<List<ProductGetModel>> result = new ServicesResult<List<ProductGetModel>>();
 
             try
             {
                 var products = this.productRepository.GetEntities().Select(
-                    products => new ProductsDtoGetAll()
+                    products => new ProductGetModel()
                     {
-                        //id = products.id,
+                        ProductId = products.id,
                         Price = products.Precio,
                         Stock = products.Stock,
                         Marca = products.Marca
@@ -83,17 +84,17 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<ProductsDtoGetAll> Remove(ProductsDtoRemove RemoveDto)
+        public ServicesResult<ProductGetModel> Remove(ProductsDtoRemove RemoveDto)
         {
-            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
+            ServicesResult<ProductGetModel > result = new ServicesResult<ProductGetModel>();
 
             try
             {
                 this.productRepository.Remove(new Producto()
                 {
-                    id = RemoveDto.id,
-                    IdUsuarioElimino = RemoveDto.IdUsuarioElimino,
-                    FechaElimino = RemoveDto.FechaElimino
+                    id = RemoveDto.ProductId,
+                    IdUsuarioElimino = RemoveDto.UserId,
+                    FechaElimino = RemoveDto.ChangeDate
                 });
             }
             catch (Exception ex)
@@ -106,9 +107,9 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<ProductsDtoGetAll> Save(ProductsDtoAdd AddDto)
+        public ServicesResult<ProductGetModel> Save(ProductsDtoAdd AddDto)
         {
-            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
+            ServicesResult <ProductGetModel > result = new ServicesResult< ProductGetModel > ();
 
             try
             {
@@ -122,9 +123,9 @@ namespace Sales.Application.Service
 
                 this.productRepository.Save(new Producto()
                 {
-                    id = AddDto.id,
+                    id = AddDto.ProductId,
                     Descripcion = AddDto.Description,
-                    IdUsuarioCreacion = AddDto.IdUsuarioCreacion,
+                    IdUsuarioCreacion = AddDto.UserId,
                     Marca = AddDto.Marca,
                     Precio = AddDto.Price,
                     Stock = AddDto.Stock,
@@ -141,9 +142,9 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<ProductsDtoGetAll> Update(ProductsDtoUpdate UpdteDto)
+        public ServicesResult<ProductGetModel> Update(ProductsDtoUpdate UpdteDto)
         {
-            ServicesResult<ProductsDtoGetAll> result = new ServicesResult<ProductsDtoGetAll>();
+            ServicesResult <ProductGetModel > result = new ServicesResult< ProductGetModel > ();
 
             try
             {
@@ -155,7 +156,7 @@ namespace Sales.Application.Service
                     return result;
                 }
 
-                var product = this.productRepository.GetEntity(UpdteDto.Id);
+                var product = this.productRepository.GetEntity(UpdteDto.ProductId);
 
                 if (product == null)
                 {
@@ -164,10 +165,11 @@ namespace Sales.Application.Service
                     return result;
                 }
 
+                product.id = UpdteDto.ProductId;
                 product.Descripcion = UpdteDto.Description;
                 product.Marca = UpdteDto.Marca;
-                product.FechaMod = UpdteDto.FechaMod;
-                product.IdUsuarioMod = UpdteDto.IdUsuarioMod;
+                product.FechaMod = UpdteDto.ChangeDate;
+                product.IdUsuarioMod = UpdteDto.UserId;
 
                 this.productRepository.Update(product);
             }

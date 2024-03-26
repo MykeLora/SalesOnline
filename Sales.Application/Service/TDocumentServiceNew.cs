@@ -38,7 +38,7 @@ namespace Sales.Application.Service
                     result.Data = new TDocumentDtoGetAll()
                     {
                         IdTDocument = tdocument.id,
-                        Description = tdocument.Descripcion,
+                        Descripcion = tdocument.Descripcion,
                         esActivo = tdocument.EsActivo,
                         ChangeDate = tdocument.FechaRegistro
                     };
@@ -69,7 +69,7 @@ namespace Sales.Application.Service
                     document => new TDocumentDtoGetAll()
                     {
                         IdTDocument = document.id,
-                        Description = document.Descripcion,
+                        Descripcion = document.Descripcion,
                         esActivo = document.EsActivo,
                         ChangeDate = document.FechaRegistro
                     }).ToList();
@@ -125,7 +125,7 @@ namespace Sales.Application.Service
 
                 this.tipoDocumentoVentaRepository.Save(new TipoDocumentoVenta() 
                 {
-                    Descripcion = AddDto.Description,
+                    Descripcion = AddDto.Descripcion,
                     IdUsuarioCreacion = AddDto.IdUsuarioCreacion,
                     EsActivo = AddDto.esActivo,
                     FechaRegistro = AddDto.FechaRegistro
@@ -164,7 +164,7 @@ namespace Sales.Application.Service
                     return result;
                 }
 
-                document.Descripcion = UpdteDto.Description;
+                document.Descripcion = UpdteDto.Descripcion;
                 document.EsActivo = UpdteDto.esActivo;
                 document.FechaMod = UpdteDto.ChangeDate;
                 document.IdUsuarioMod = UpdteDto.ChanceUser;

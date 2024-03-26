@@ -11,8 +11,7 @@ namespace Sales.Application.Dtos.Category
 
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public int IdUsuarioCreacion {  get; set; }
-        public DateTime? FechaMod {  get; set; }
+      
     }
 }
 

@@ -19,6 +19,5 @@ namespace Sales.Domain.Entites
         public string? UrlImagen { get; set; }
         public string? NombreImagen { get; set; }
         public decimal? Precio { get; set; }
-        public int IdProducto { get; set; }
     }
 }
