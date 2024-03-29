@@ -114,11 +114,12 @@ namespace Sales.Application.Service
 
             try
             {
-                var validationResult = this.IsValid(AddDto);
+                var validationResult = this.IsValid(AddDto, DtoAction.Save);
 
                 if (!validationResult.Success)
                 {
                     result.Message = validationResult.Message;
+                    result.Success = validationResult.Success;
                     return result;
                 }
 
@@ -146,10 +147,11 @@ namespace Sales.Application.Service
 
             try
             {
-                var validationResult = this.IsValid(UpdateDto);
+                var validationResult = this.IsValid(UpdateDto, DtoAction.Update);
 
                 if (!validationResult.Success)
                 {
+                    result.Success = result.Success;
                     result.Message = validationResult.Message;
                     return result;
                 }
@@ -180,7 +182,7 @@ namespace Sales.Application.Service
             return result;
         }
 
-        private ServicesResult<string> IsValid(CategoryDtoBase categoryDtoBase)
+        private ServicesResult<string> IsValid(CategoryDtoBase categoryDtoBase, DtoAction action)
         {
             ServicesResult<string> result = new ServicesResult<string>();
 

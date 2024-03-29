@@ -11,7 +11,7 @@ namespace Sales.Application.Dtos.Product
         public string? Marca { get; set; }
         public int CategoryId { get; set; }
         public decimal? Price { get; set; }
-        public string Description { get; set; }
+        public string? Descripcion { get; set; }
         public int? Stock { get; set; }
     }
 }

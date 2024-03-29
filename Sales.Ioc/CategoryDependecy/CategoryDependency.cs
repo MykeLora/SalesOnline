@@ -11,17 +11,17 @@ using System.Threading.Tasks;
 
 namespace Sales.Ioc.CategoryDependecy
 {
-    public static class CategoryDependency
+    public static class CategoryDependency 
     {
-        public static void AddCategoryDependency(this IServiceCollection service)
+        public static  void AddCategoryDependency(this IServiceCollection services)
         {
             // Repositories
 
-            service.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             // App services
 
-            service.AddScoped<ICategoryService, CategoryNewService>();
+            services.AddScoped<ICategoryService, CategoryNewService>();
         }
     }
 }

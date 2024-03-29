@@ -3,21 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Domain", "Sales.Domain\Sales.Domain.csproj", "{28D6FAA8-0DF6-4934-B9C6-26172C59DCFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.Domain", "Sales.Domain\Sales.Domain.csproj", "{28D6FAA8-0DF6-4934-B9C6-26172C59DCFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Infraestructure", "Sales.Infraestructure\Sales.Infraestructure.csproj", "{4739CA74-9DAC-4CD6-868F-70CDC4B98B13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.Infraestructure", "Sales.Infraestructure\Sales.Infraestructure.csproj", "{4739CA74-9DAC-4CD6-868F-70CDC4B98B13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Application", "Sales.Application\Sales.Application.csproj", "{EED47EE0-033E-4DD4-B941-9A8C04556835}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.Application", "Sales.Application\Sales.Application.csproj", "{EED47EE0-033E-4DD4-B941-9A8C04556835}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Ioc", "Sales.Ioc\Sales.Ioc.csproj", "{1512C86A-F99F-435B-8438-BD04D3FA7AE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.Ioc", "Sales.Ioc\Sales.Ioc.csproj", "{1512C86A-F99F-435B-8438-BD04D3FA7AE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Web", "Sales.Web\Sales.Web.csproj", "{872D75A6-588E-4A86-9140-14BA99629FBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.Web", "Sales.Web\Sales.Web.csproj", "{872D75A6-588E-4A86-9140-14BA99629FBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.Api", "Sales.Api\Sales.Api.csproj", "{5DDE347A-8137-479A-ABA4-A01A690C7F39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.Api", "Sales.Api\Sales.Api.csproj", "{5DDE347A-8137-479A-ABA4-A01A690C7F39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.UnitTest", "Sales.UnitTest\Sales.UnitTest.csproj", "{A269E424-4083-485B-86D0-4B3669F4021A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.UnitTest", "Sales.UnitTest\Sales.UnitTest.csproj", "{A269E424-4083-485B-86D0-4B3669F4021A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.IntegrationTest", "Sales.IntegrationTest\Sales.IntegrationTest.csproj", "{1296B978-8AD6-49E2-B72D-973E4F86778B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sales.IntegrationTest", "Sales.IntegrationTest\Sales.IntegrationTest.csproj", "{1296B978-8AD6-49E2-B72D-973E4F86778B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sales.WebApp", "Sales.WebApp\Sales.WebApp.csproj", "{1C70E403-7942-45EC-8571-D917DA16633D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{1296B978-8AD6-49E2-B72D-973E4F86778B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1296B978-8AD6-49E2-B72D-973E4F86778B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1296B978-8AD6-49E2-B72D-973E4F86778B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C70E403-7942-45EC-8571-D917DA16633D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C70E403-7942-45EC-8571-D917DA16633D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C70E403-7942-45EC-8571-D917DA16633D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C70E403-7942-45EC-8571-D917DA16633D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

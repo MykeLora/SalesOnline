@@ -4,6 +4,11 @@ using Sales.Application.Service;
 using Sales.Infraestructure.Context;
 using Sales.Infraestructure.Interfaces;
 using Sales.Infraestructure.Repositories;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Sales.Ioc.CategoryDependecy;
+using Sales.Ioc.ProductDependecy;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<SalesContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SalesContext")));
 
+
+builder.Services.AddCategoryDependency();
+
+builder.Services.AddProductDependecy();
 
 // Repositories
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -29,6 +38,7 @@ builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<ITDocumentVentService, TDocumentServiceNew>();
 
 // Add services to the container.
+builder.Services.AddCategoryDependency();
 
 builder.Services.AddControllers();
 

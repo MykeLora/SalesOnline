@@ -3,6 +3,7 @@ using Sales.Application.Contract;
 using Sales.Application.Core;
 using Sales.Application.Dtos.Category;
 using Sales.Application.Dtos.TDocumentVenta;
+using Sales.Application.Models.TDocumentVentas;
 using Sales.Domain.Entites; // Corregido el namespace
 using Sales.Infraestructure.Interfaces;
 using System;
@@ -25,9 +26,9 @@ namespace Sales.Application.Service
             this.tipoDocumentoVentaRepository = tipoDocumentoVentaRepository; // Corregido el nombre de la variable
         }
 
-        public ServicesResult<TDocumentDtoGetAll> Get(int Id)
+        public ServicesResult<TDocumentVentaGetModel> Get(int Id)
         {
-            ServicesResult<TDocumentDtoGetAll> result = new ServicesResult<TDocumentDtoGetAll>();
+            ServicesResult< TDocumentVentaGetModel> result = new ServicesResult<TDocumentVentaGetModel>();
 
             try
             {
@@ -35,12 +36,12 @@ namespace Sales.Application.Service
 
                 if (tdocument != null)
                 {
-                    result.Data = new TDocumentDtoGetAll()
+                    result.Data = new TDocumentVentaGetModel()
                     {
-                        IdTDocument = tdocument.id,
+                        TDocumentVentaId = tdocument.id,
                         Descripcion = tdocument.Descripcion,
-                        esActivo = tdocument.EsActivo,
-                        ChangeDate = tdocument.FechaRegistro
+                        EsActivo = tdocument.EsActivo,
+                        CreateDate = tdocument.FechaRegistro
                     };
                 }
                 else
@@ -59,19 +60,19 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<List<TDocumentDtoGetAll>> GetAll()
+        public ServicesResult<List<TDocumentVentaGetModel>> GetAll()
         {
-            ServicesResult<List<TDocumentDtoGetAll>> result = new ServicesResult<List<TDocumentDtoGetAll>>();
+            ServicesResult<List<TDocumentVentaGetModel>> result = new ServicesResult<List<TDocumentVentaGetModel>>();
 
             try
             {
                 var tdocuments = this.tipoDocumentoVentaRepository.GetEntities().Select(
-                    document => new TDocumentDtoGetAll()
+                    document => new TDocumentVentaGetModel()
                     {
-                        IdTDocument = document.id,
+                        TDocumentVentaId = document.id,
                         Descripcion = document.Descripcion,
-                        esActivo = document.EsActivo,
-                        ChangeDate = document.FechaRegistro
+                        EsActivo = document.EsActivo,
+                        CreateDate = document.FechaRegistro
                     }).ToList();
 
                 result.Data = tdocuments;
@@ -86,17 +87,17 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<TDocumentDtoGetAll> Remove(TDocumentRemoveDto RemoveDto)
+        public ServicesResult<TDocumentVentaGetModel> Remove(TDocumentRemoveDto RemoveDto)
         {
-            ServicesResult<TDocumentDtoGetAll> result = new ServicesResult<TDocumentDtoGetAll>();
+            ServicesResult<TDocumentVentaGetModel> result = new ServicesResult<TDocumentVentaGetModel>();
 
             try
             {
                 this.tipoDocumentoVentaRepository.Remove(new TipoDocumentoVenta()
                 {
-                    id = RemoveDto.IdTDocument,
-                    IdUsuarioElimino = RemoveDto.IdUsuarioElimino,
-                    FechaElimino = RemoveDto.FechaElimino
+                    id = RemoveDto.TdocumentId,
+                    IdUsuarioElimino = RemoveDto.UserId,
+                    FechaElimino = RemoveDto.ChangeDate
                 });
             }
             catch (Exception ex)
@@ -109,9 +110,9 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<TDocumentDtoGetAll> Save(TDocumentDtoAdd AddDto)
+        public ServicesResult<TDocumentVentaGetModel> Save(TDocumentDtoAdd AddDto)
         {
-            ServicesResult<TDocumentDtoGetAll> result = new ServicesResult<TDocumentDtoGetAll>();
+            ServicesResult<TDocumentVentaGetModel> result = new ServicesResult<TDocumentVentaGetModel>();
 
             try
             {
@@ -126,9 +127,9 @@ namespace Sales.Application.Service
                 this.tipoDocumentoVentaRepository.Save(new TipoDocumentoVenta() 
                 {
                     Descripcion = AddDto.Descripcion,
-                    IdUsuarioCreacion = AddDto.IdUsuarioCreacion,
+                    IdUsuarioCreacion = AddDto.UserId,
                     EsActivo = AddDto.esActivo,
-                    FechaRegistro = AddDto.FechaRegistro
+                    FechaRegistro = AddDto.ChangeDate
                 });
             }
             catch (Exception ex)
@@ -141,9 +142,9 @@ namespace Sales.Application.Service
             return result;
         }
 
-        public ServicesResult<TDocumentDtoGetAll> Update(TDocumentDtoUpdate UpdteDto)
+        public ServicesResult<TDocumentVentaGetModel> Update(TDocumentDtoUpdate UpdteDto)
         {
-            ServicesResult<TDocumentDtoGetAll> result = new ServicesResult<TDocumentDtoGetAll>();
+            ServicesResult<TDocumentVentaGetModel> result = new ServicesResult<TDocumentVentaGetModel>();
 
             try
             {
@@ -155,7 +156,7 @@ namespace Sales.Application.Service
                     return result;
                 }
 
-                var document = this.tipoDocumentoVentaRepository.GetEntity(UpdteDto.IdTDocument);
+                var document = this.tipoDocumentoVentaRepository.GetEntity(UpdteDto.TdocumentId);
 
                 if (document == null)
                 {
@@ -167,7 +168,7 @@ namespace Sales.Application.Service
                 document.Descripcion = UpdteDto.Descripcion;
                 document.EsActivo = UpdteDto.esActivo;
                 document.FechaMod = UpdteDto.ChangeDate;
-                document.IdUsuarioMod = UpdteDto.ChanceUser;
+                document.IdUsuarioMod = UpdteDto.UserId;
 
                 this.tipoDocumentoVentaRepository.Update(document);
             }

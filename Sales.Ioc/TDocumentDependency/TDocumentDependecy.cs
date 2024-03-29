@@ -13,15 +13,15 @@ namespace Sales.Ioc.TDocumentDependency
 {
     public static class TDocumentDependecy
     {
-        public static void AddTDocumentDependecy( this IServiceCollection service)
+        public static void AddTDocumentDependecy( this IServiceCollection services)
         {
             //Repositories
 
-            service.AddScoped<ITipoDocumentoVentaRepository, TipoDocumentoVentaRepository>();
+            services.AddScoped<ITipoDocumentoVentaRepository, TipoDocumentoVentaRepository>();
 
             // App Services
 
-            service.AddScoped<ITDocumentVentService, TDocumentServiceNew>();
+            services.AddScoped<ITDocumentVentService, TDocumentServiceNew>();
         }
     }
 }

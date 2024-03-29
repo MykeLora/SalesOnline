@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Dtos.TDocumentVenta
 {
-    public class TDocumentRemoveDto : TDocumentDtoBase
+    public class TDocumentRemoveDto : DtoBase
     {
-        public bool Eliminado { get; set; } = false;
-        public int? IdUsuarioElimino { get; internal set; }
-        public DateTime? FechaElimino { get; internal set; }
+        public int TdocumentId {  get; set; }
     }
 }

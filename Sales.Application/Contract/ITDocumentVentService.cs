@@ -1,6 +1,7 @@
 ﻿using Sales.Application.Core;
 using Sales.Application.Dtos.Category;
 using Sales.Application.Dtos.TDocumentVenta;
+using Sales.Application.Models.TDocumentVentas;
 using Sales.Domain.Repository;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Sales.Application.Contract
 {
-    public interface ITDocumentVentService : IBaseServices<TDocumentDtoAdd, TDocumentDtoUpdate, TDocumentRemoveDto, TDocumentDtoGetAll>
+    public interface ITDocumentVentService : IBaseServices<TDocumentDtoAdd, TDocumentDtoUpdate, TDocumentRemoveDto, TDocumentVentaGetModel>
     {
 
     }

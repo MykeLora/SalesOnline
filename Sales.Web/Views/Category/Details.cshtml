@@ -1,0 +1,40 @@
+﻿@model Sales.Application.Models.Category.CategoryGetModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details categories</h1>
+
+<div>
+    <h4>CategoryGetModel</h4>
+    <hr />
+    <dl class="row">
+ 
+        dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreationDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreationDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (Model.CategoryId != null)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.CategoryId">Edit</a>
+        <a asp-action="Index">Back to List</a>
+    }
+    
+</div>

@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Sales.Application\Sales.Application.csproj" />
     <ProjectReference Include="..\Sales.Infraestructure\Sales.Infraestructure.csproj" />
+    <ProjectReference Include="..\Sales.Ioc\Sales.Ioc.csproj" />
   </ItemGroup>
 
 </Project>

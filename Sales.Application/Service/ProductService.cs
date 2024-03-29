@@ -64,9 +64,11 @@ namespace Sales.Application.Service
                     products => new ProductGetModel()
                     {
                         ProductId = products.id,
+                        Description =  products.Descripcion,
                         Price = products.Precio,
                         Stock = products.Stock,
-                        Marca = products.Marca
+                        Marca = products.Marca,
+                        CreationDate = products.FechaRegistro
 
                     }).ToList();
 
@@ -124,12 +126,13 @@ namespace Sales.Application.Service
                 this.productRepository.Save(new Producto()
                 {
                     id = AddDto.ProductId,
-                    Descripcion = AddDto.Description,
+                    Descripcion = AddDto.Descripcion,
                     IdUsuarioCreacion = AddDto.UserId,
                     Marca = AddDto.Marca,
                     Precio = AddDto.Price,
                     Stock = AddDto.Stock,
-                    IdCategoria = AddDto.CategoryId
+                    IdCategoria = AddDto.CategoryId,
+                    FechaRegistro = AddDto.ChangeDate
                 });
             }
             catch (Exception ex)
@@ -166,7 +169,7 @@ namespace Sales.Application.Service
                 }
 
                 product.id = UpdteDto.ProductId;
-                product.Descripcion = UpdteDto.Description;
+                product.Descripcion = UpdteDto.Descripcion;
                 product.Marca = UpdteDto.Marca;
                 product.FechaMod = UpdteDto.ChangeDate;
                 product.IdUsuarioMod = UpdteDto.UserId;
@@ -201,14 +204,14 @@ namespace Sales.Application.Service
                 return result;
             }
 
-            if (string.IsNullOrEmpty(productsDtoBase.Description))
+            if (string.IsNullOrEmpty(productsDtoBase.Descripcion))
             {
                 result.Success = false;
                 result.Message = "La descripción del producto es requerida.";
                 return result;
             }
 
-            if (productsDtoBase.Description.Length > 200)
+            if (productsDtoBase.Descripcion.Length > 200)
             {
                 result.Success = false;
                 result.Message = "La descripción del producto debe tener máximo 200 caracteres.";
