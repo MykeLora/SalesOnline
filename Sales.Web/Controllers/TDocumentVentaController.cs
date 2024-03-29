@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Sales.Application.Dtos.Category;
 using Sales.Application.Dtos.Product;
+using Sales.Application.Dtos.TDocumentVenta;
 using Sales.Application.Models.Product;
+using Sales.Application.Models.TDocumentVentas;
 using Sales.Web.Models.Product;
+using Sales.Web.Models.TDocumentVenta;
 using System.Text;
 
 namespace Sales.Web.Controllers
@@ -19,10 +22,10 @@ namespace Sales.Web.Controllers
             this.httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyError) => { return true; };
 
         }
-        // GET: CategoryController
+   
         public async Task<IActionResult> Index()
         {
-            List<ProductGetModel> products;
+            List<TDocumentVentaGetModel> Tdocuements;
 
             using (var httpClient = new HttpClient(this.httpClientHandler))
             {
@@ -33,31 +36,31 @@ namespace Sales.Web.Controllers
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         string apiResponse = await response.Content.ReadAsStringAsync();
-                        products = JsonConvert.DeserializeObject<List<ProductGetModel>>(apiResponse);
+                        Tdocuements = JsonConvert.DeserializeObject<List<TDocumentVentaGetModel>>(apiResponse);
 
-                        if (products == null || products.Count == 0)
+                        if (Tdocuements == null || Tdocuements.Count == 0)
                         {
-                            ViewBag.Message = "No se encontraron los productos.";
+                            ViewBag.Message = "No se encontraron los documentos de ventas.";
                             return View();
                         }
                     }
                     else
                     {
                         // Manejar el caso en el que la solicitud no fue exitosa
-                        ViewBag.Message = "Error al obtener los productos desde la API.";
+                        ViewBag.Message = "Error al obtener los documentos desde la API.";
                         return View();
                     }
                 }
             }
 
-            return View(products);
+            return View(Tdocuements);
         }
 
 
 
         public async Task<IActionResult> Details(int id)
         {
-            var product = new ProductDetailView();
+            var Tdocuments = new TDocumentDetailView();
 
             using (var httpClient = new HttpClient(this.httpClientHandler))
             {
@@ -68,38 +71,37 @@ namespace Sales.Web.Controllers
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         string apiResponse = await response.Content.ReadAsStringAsync();
-                        product = JsonConvert.DeserializeObject<ProductDetailView>(apiResponse);
+                        Tdocuments = JsonConvert.DeserializeObject<TDocumentDetailView>(apiResponse);
 
-                        if (!product.success)
+                        if (!Tdocuments.success)
                         {
-                            ViewBag.Message = product.message;
+                            ViewBag.Message = Tdocuments.message;
                             return View();
                         }
                     }
                 }
             }
 
-            if (product.data == null)
+            if (Tdocuments.data == null)
             {
-                // Aquí puedes manejar el caso en que no se encontró ninguna categoría con el id proporcionado
-                ViewBag.Message = "No se encontró ninguna categoría con el ID proporcionado.";
+                
+                ViewBag.Message = "No se encontró ningun Documento con el ID proporcionado.";
                 return View();
             }
 
-            return View(product.data);
+            return View(Tdocuments.data);
         }
 
 
-        // GET: CategoryController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: CategoryController/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CategoryDtoAdd categoryDtoAdd)
+        public async Task<IActionResult> Create(TDocumentDtoAdd documentDtoAdd)
         {
             try
             {
@@ -107,18 +109,16 @@ namespace Sales.Web.Controllers
                 {
                     var url = $"http://localhost:5158/api/TDocumentVenta/Save";
 
-                    categoryDtoAdd.UserId = 1;
-                    categoryDtoAdd.ChangeDate = DateTime.Now;
+                    documentDtoAdd.UserId = 1;
+                    documentDtoAdd.ChangeDate = DateTime.Now;
 
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(categoryDtoAdd), Encoding.UTF8, "application/json");
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(documentDtoAdd), Encoding.UTF8, "application/json");
 
                     using (var response = await httpClient.PostAsync(url, content))
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
                             string apiResponse = await response.Content.ReadAsStringAsync();
-
-                            //category = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
 
 
                         }
@@ -135,22 +135,22 @@ namespace Sales.Web.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var product = new ProductDetailView();
+            var TDocument = new TDocumentDetailView();
 
             using (var httpClient = new HttpClient(this.httpClientHandler))
             {
-                var url = $"http://localhost:5158/api/Product/GetProductById?id={id}";
+                var url = $"http://localhost:5158/api/TDocumentVenta/GetTDocumentById?id={id}";
 
                 using (var response = await httpClient.GetAsync(url))
                 {
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         string apiResponse = await response.Content.ReadAsStringAsync();
-                        product = JsonConvert.DeserializeObject<ProductDetailView>(apiResponse);
+                        TDocument = JsonConvert.DeserializeObject<TDocumentDetailView>(apiResponse);
 
-                        if (!product.success)
+                        if (!TDocument.success)
                         {
-                            ViewBag.Message = product.message;
+                            ViewBag.Message = TDocument.message;
                             return View();
                         }
                     }
@@ -159,12 +159,12 @@ namespace Sales.Web.Controllers
                 }
             }
 
-            return View(product.data);
+            return View(TDocument.data);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProductsDtoUpdate productsDtoUpdate)
+        public async Task<IActionResult> Edit(TDocumentDtoUpdate documentDtoUpdate)
         {
             try
             {
@@ -172,23 +172,18 @@ namespace Sales.Web.Controllers
                 {
                     var url = $"http://localhost:5158/api/TDocumentVenta/UpdateTDocumentVenta";
 
-                    productsDtoUpdate.UserId = 1;
-                    productsDtoUpdate.ChangeDate = DateTime.Now;
+                    documentDtoUpdate.UserId = 1;
+                    documentDtoUpdate.ChangeDate = DateTime.Now;
 
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(productsDtoUpdate), Encoding.UTF8, "application/json");
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(documentDtoUpdate), Encoding.UTF8, "application/json");
 
                     using (var response = await httpClient.PostAsync(url, content))
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
                             string apiResponse = await response.Content.ReadAsStringAsync();
-                            //category = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
+                           // Tdocument = JsonConvert.DeserializeObject<TDocumentDetailView>(apiResponse);
 
-                            //if (!category.success)
-                            //{
-                            //    ViewBag.Message = category.message;
-                            //   return View();
-                            //}
                         }
 
 

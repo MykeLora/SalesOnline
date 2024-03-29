@@ -21,7 +21,7 @@ namespace Sales.Web.Controllers
             this.httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyError) => { return true; };
 
         }
-        // GET: CategoryController
+       
         public async Task<IActionResult> Index()
         {
             List<ProductGetModel> products;
@@ -83,7 +83,7 @@ namespace Sales.Web.Controllers
 
             if (product.data == null)
             {
-                // Aquí puedes manejar el caso en que no se encontró ninguna categoría con el id proporcionado
+                
                 ViewBag.Message = "No se encontró ninguna categoría con el ID proporcionado.";
                 return View();
             }
@@ -92,16 +92,15 @@ namespace Sales.Web.Controllers
         }
 
 
-        // GET: CategoryController/Create
+     
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: CategoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CategoryDtoAdd categoryDtoAdd)
+        public async Task<IActionResult> Create(ProductsDtoAdd productsDtoAdd)
         {
             try
             {
@@ -109,10 +108,10 @@ namespace Sales.Web.Controllers
                 {
                     var url = $"http://localhost:5158/api/Product/SaveProduct";
 
-                    categoryDtoAdd.UserId = 1;
-                    categoryDtoAdd.ChangeDate = DateTime.Now;
+                    productsDtoAdd.UserId = 1;
+                    productsDtoAdd.ChangeDate = DateTime.Now;
 
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(categoryDtoAdd), Encoding.UTF8, "application/json");
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(productsDtoAdd), Encoding.UTF8, "application/json");
 
                     using (var response = await httpClient.PostAsync(url, content))
                     {
@@ -120,7 +119,7 @@ namespace Sales.Web.Controllers
                         {
                             string apiResponse = await response.Content.ReadAsStringAsync();
 
-                            //category = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
+                            //product = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
 
 
                         }
@@ -184,9 +183,9 @@ namespace Sales.Web.Controllers
                         if (response.StatusCode == System.Net.HttpStatusCode.OK)
                         {
                             string apiResponse = await response.Content.ReadAsStringAsync();
-                            //category = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
+                            //product = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
 
-                            //if (!category.success)
+                            //if (!product.success)
                             //{
                             //    ViewBag.Message = category.message;
                             //   return View();
