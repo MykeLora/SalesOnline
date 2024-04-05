@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sales.Application.Contract;
+using Sales.Application.Service;
+using Sales.Infraestructure.Interfaces;
+using Sales.Infraestructure.Repositories;
 using Sales.Ioc.CategoryDependecy;
 using Sales.Ioc.ProductDependecy;
 using Sales.Ioc.TDocumentDependency;

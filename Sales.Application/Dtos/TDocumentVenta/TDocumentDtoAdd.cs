@@ -8,5 +8,6 @@ namespace Sales.Application.Dtos.TDocumentVenta
 {
      public class TDocumentDtoAdd : TDocumentDtoBase
     {
+        public int TdocumentId {  get; set; }
     }
 }

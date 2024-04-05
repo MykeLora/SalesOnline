@@ -16,14 +16,10 @@ namespace Sales.Ioc.ProductDependecy
     {
         public static void AddProductDependecy(this IServiceCollection services)
         {
-
-            // Repositories
-
-            services.AddScoped<IProductoRepository, ProductRepository>();
-
-            // App Service
-
-            services.AddScoped<IProductService, ProductService>();
+    
+        services.AddScoped<IProductoRepository, ProductRepository>();
+    
+        services.AddScoped<IProductService, ProductService>();
 
         }
     }

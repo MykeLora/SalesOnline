@@ -1,4 +1,5 @@
 ﻿using Sales.Application.Models.Category;
+using System.Drawing;
 
 namespace Sales.Web.Models.Category
 {
@@ -6,6 +7,7 @@ namespace Sales.Web.Models.Category
     {
         public bool success { get; set; }
         public string? message { get; set; }
-        public List<CategoryGetModel>? data { get; set; }
+        public List<CategoryResult> data { get; set; }
     }
+
 }

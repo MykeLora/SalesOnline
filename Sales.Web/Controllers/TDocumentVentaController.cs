@@ -8,6 +8,7 @@ using Sales.Application.Models.Product;
 using Sales.Application.Models.TDocumentVentas;
 using Sales.Web.Models.Product;
 using Sales.Web.Models.TDocumentVenta;
+using Sales.Web.Services.Contract;
 using System.Text;
 
 namespace Sales.Web.Controllers
@@ -16,81 +17,41 @@ namespace Sales.Web.Controllers
     {
 
         HttpClientHandler httpClientHandler = new HttpClientHandler();
+        private readonly ITdocumentVentaSevices tdocumentVenta;
 
-        public TDocumentVentaController()
+        public TDocumentVentaController(ITdocumentVentaSevices tdocumentVenta)
         {
-            this.httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyError) => { return true; };
-
+            this.tdocumentVenta = tdocumentVenta;
         }
-   
+
         public async Task<IActionResult> Index()
         {
-            List<TDocumentVentaGetModel> Tdocuements;
 
-            using (var httpClient = new HttpClient(this.httpClientHandler))
+            var Result = await this.tdocumentVenta.Get();
+
+            if (!Result.Success)
             {
-                var url = "http://localhost:5158/api/TDocumentVenta";
-
-                using (var response = await httpClient.GetAsync(url))
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        Tdocuements = JsonConvert.DeserializeObject<List<TDocumentVentaGetModel>>(apiResponse);
-
-                        if (Tdocuements == null || Tdocuements.Count == 0)
-                        {
-                            ViewBag.Message = "No se encontraron los documentos de ventas.";
-                            return View();
-                        }
-                    }
-                    else
-                    {
-                        // Manejar el caso en el que la solicitud no fue exitosa
-                        ViewBag.Message = "Error al obtener los documentos desde la API.";
-                        return View();
-                    }
-                }
+                ViewBag.Message = Result.Message;
+                return View(new List<TDocumentVentaGetModel>());
             }
 
-            return View(Tdocuements);
+            return View(Result.Data);
         }
-
 
 
         public async Task<IActionResult> Details(int id)
         {
-            var Tdocuments = new TDocumentDetailView();
+            var Result = await this.tdocumentVenta.GetById(id);
 
-            using (var httpClient = new HttpClient(this.httpClientHandler))
+            if (!Result.Success)
             {
-                var url = $"http://localhost:5158/api/TDocumentVenta/GetTDocumentById?id={id}";
-
-                using (var response = await httpClient.GetAsync(url))
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        Tdocuments = JsonConvert.DeserializeObject<TDocumentDetailView>(apiResponse);
-
-                        if (!Tdocuments.success)
-                        {
-                            ViewBag.Message = Tdocuments.message;
-                            return View();
-                        }
-                    }
-                }
-            }
-
-            if (Tdocuments.data == null)
-            {
-                
-                ViewBag.Message = "No se encontró ningun Documento con el ID proporcionado.";
+                ViewBag.Message = Result.Message;
                 return View();
             }
 
-            return View(Tdocuments.data);
+            return View(Result.Data);
         }
+
 
 
         public ActionResult Create()
@@ -98,104 +59,61 @@ namespace Sales.Web.Controllers
             return View();
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TDocumentDtoAdd documentDtoAdd)
+        public async Task<IActionResult> Create(TDocumentDtoAdd documentDto)
         {
-            try
+            documentDto.UserId = 1;
+            documentDto.ChangeDate = DateTime.Now;
+
+            if (!ModelState.IsValid)
             {
-                using (var httpClient = new HttpClient(this.httpClientHandler))
-                {
-                    var url = $"http://localhost:5158/api/TDocumentVenta/Save";
-
-                    documentDtoAdd.UserId = 1;
-                    documentDtoAdd.ChangeDate = DateTime.Now;
-
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(documentDtoAdd), Encoding.UTF8, "application/json");
-
-                    using (var response = await httpClient.PostAsync(url, content))
-                    {
-                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
-
-
-                        }
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(documentDto);
             }
-            catch
+
+            var result = await this.tdocumentVenta.Save(documentDto);
+            if (!result.Success)
             {
-                return View();
+                ViewBag.Message = result.Message;
+                return View(documentDto);
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
 
         public async Task<IActionResult> Edit(int id)
         {
-            var TDocument = new TDocumentDetailView();
+            var result = await this.tdocumentVenta.GetById(id);
 
-            using (var httpClient = new HttpClient(this.httpClientHandler))
+            if (!result.Success)
             {
-                var url = $"http://localhost:5158/api/TDocumentVenta/GetTDocumentById?id={id}";
-
-                using (var response = await httpClient.GetAsync(url))
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        TDocument = JsonConvert.DeserializeObject<TDocumentDetailView>(apiResponse);
-
-                        if (!TDocument.success)
-                        {
-                            ViewBag.Message = TDocument.message;
-                            return View();
-                        }
-                    }
-
-
-                }
+                ViewBag.Message = result.Message;
+                return View();
             }
 
-            return View(TDocument.data);
+            return View(result.Data);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(TDocumentDtoUpdate documentDtoUpdate)
+        public async Task<IActionResult> Edit(TDocumentDtoUpdate dtoUpdate)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                using (var httpClient = new HttpClient(this.httpClientHandler))
-                {
-                    var url = $"http://localhost:5158/api/TDocumentVenta/UpdateTDocumentVenta";
-
-                    documentDtoUpdate.UserId = 1;
-                    documentDtoUpdate.ChangeDate = DateTime.Now;
-
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(documentDtoUpdate), Encoding.UTF8, "application/json");
-
-                    using (var response = await httpClient.PostAsync(url, content))
-                    {
-                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
-                           // Tdocument = JsonConvert.DeserializeObject<TDocumentDetailView>(apiResponse);
-
-                        }
-
-
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(dtoUpdate);
             }
-            catch
+
+            var result = await this.tdocumentVenta.Update(dtoUpdate);
+
+            if (!result.Success)
             {
-                return View();
+                return View(dtoUpdate);
             }
+
+            return RedirectToAction(nameof(Index));
         }
-
     }
 }

@@ -1,208 +1,123 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Sales.Application.Contract;
 using Sales.Application.Dtos.Category;
 using Sales.Application.Dtos.Product;
 using Sales.Application.Models.Category;
 using Sales.Application.Models.Product;
-using Sales.Web.Models.Category;
+using Sales.Web.Models;
 using Sales.Web.Models.Product;
+using Sales.Web.Services.Contract;
+using System;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sales.Web.Controllers
 {
     public class ProductController : Controller
     {
 
+
         HttpClientHandler httpClientHandler = new HttpClientHandler();
+        private readonly IProductServices productServices;
 
-        public ProductController()
+        public ProductController(IProductServices productServices)
         {
-            this.httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyError) => { return true; };
-
+            this.productServices = productServices;
         }
-       
+
         public async Task<IActionResult> Index()
         {
-            List<ProductGetModel> products;
 
-            using (var httpClient = new HttpClient(this.httpClientHandler))
+            var Result = await this.productServices.Get();
+
+            if (!Result.Success)
             {
-                var url = "http://localhost:5158/api/Product/GetProducts";
-
-                using (var response = await httpClient.GetAsync(url))
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        products = JsonConvert.DeserializeObject<List<ProductGetModel>>(apiResponse);
-
-                        if (products == null || products.Count == 0)
-                        {
-                            ViewBag.Message = "No se encontraron los productos.";
-                            return View();
-                        }
-                    }
-                    else
-                    {
-                        // Manejar el caso en el que la solicitud no fue exitosa
-                        ViewBag.Message = "Error al obtener los productos desde la API.";
-                        return View();
-                    }
-                }
+                ViewBag.Message = Result.Message;
+                return View(new List<ProductGetModel>());
             }
 
-            return View(products);
+            return View(Result.Data);
         }
-    
 
 
         public async Task<IActionResult> Details(int id)
         {
-            var product = new ProductDetailView();
+            var Result = await this.productServices.GetById(id);
 
-            using (var httpClient = new HttpClient(this.httpClientHandler))
+            if (!Result.Success)
             {
-                var url = $"http://localhost:5158/api/Product/GetProductById?id={id}";
-
-                using (var response = await httpClient.GetAsync(url))
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        product = JsonConvert.DeserializeObject<ProductDetailView>(apiResponse);
-
-                        if (!product.success)
-                        {
-                            ViewBag.Message = product.message;
-                            return View();
-                        }
-                    }
-                }
-            }
-
-            if (product.data == null)
-            {
-                
-                ViewBag.Message = "No se encontró ninguna categoría con el ID proporcionado.";
+                ViewBag.Message = Result.Message;
                 return View();
             }
 
-            return View(product.data);
+            return View(Result.Data);
         }
 
 
-     
+
         public ActionResult Create()
         {
             return View();
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductsDtoAdd productsDtoAdd)
         {
-            try
+            productsDtoAdd.UserId = 1;
+            productsDtoAdd.ChangeDate = DateTime.Now;
+
+            if (!ModelState.IsValid)
             {
-                using (var httpClient = new HttpClient(this.httpClientHandler))
-                {
-                    var url = $"http://localhost:5158/api/Product/SaveProduct";
-
-                    productsDtoAdd.UserId = 1;
-                    productsDtoAdd.ChangeDate = DateTime.Now;
-
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(productsDtoAdd), Encoding.UTF8, "application/json");
-
-                    using (var response = await httpClient.PostAsync(url, content))
-                    {
-                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
-
-                            //product = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
-
-
-                        }
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(productsDtoAdd);
             }
-            catch
+
+            var result = await this.productServices.Save(productsDtoAdd);
+            if (!result.Success)
             {
-                return View();
+                ViewBag.Message = result.Message;
+                return View(productsDtoAdd);
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
 
         public async Task<IActionResult> Edit(int id)
         {
-            var product = new ProductDetailView();
+            var result = await this.productServices.GetById(id);
 
-            using (var httpClient = new HttpClient(this.httpClientHandler))
+            if (!result.Success)
             {
-                var url = $"http://localhost:5158/api/Product/GetProductById?id={id}";
-
-                using (var response = await httpClient.GetAsync(url))
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        string apiResponse = await response.Content.ReadAsStringAsync();
-                        product = JsonConvert.DeserializeObject<ProductDetailView>(apiResponse);
-
-                        if (!product.success)
-                        {
-                            ViewBag.Message = product.message;
-                            return View();
-                        }
-                    }
-
-
-                }
-            }
-
-            return View(product.data);
-        }
-        
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit( ProductsDtoUpdate productsDtoUpdate)
-        {
-            try
-            {
-                using (var httpClient = new HttpClient(this.httpClientHandler))
-                {
-                    var url = $"http://localhost:5158/api/Product/SaveProduct";
-
-                    productsDtoUpdate.UserId = 1;
-                    productsDtoUpdate.ChangeDate = DateTime.Now;
-
-                    StringContent content = new StringContent(JsonConvert.SerializeObject(productsDtoUpdate), Encoding.UTF8, "application/json");
-
-                    using (var response = await httpClient.PostAsync(url, content))
-                    {
-                        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            string apiResponse = await response.Content.ReadAsStringAsync();
-                            //product = JsonConvert.DeserializeObject<CategoryDetailView>(apiResponse);
-
-                            //if (!product.success)
-                            //{
-                            //    ViewBag.Message = category.message;
-                            //   return View();
-                            //}
-                        }
-
-
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
+                ViewBag.Message = result.Message;
                 return View();
             }
+
+            return View(result.Data);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ProductsDtoUpdate productsDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(productsDto);
+            }
+
+            var result = await this.productServices.Update(productsDto);
+
+            if (!result.Success)
+            {
+                return View(productsDto);
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
     }
-
 }

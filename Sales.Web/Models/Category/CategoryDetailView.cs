@@ -2,11 +2,7 @@
 
 namespace Sales.Web.Models.Category
 {
-    public class CategoryDetailView
+    public class CategoryDetailView : BaseResponse
     {
-        public bool success { get; set; }
-
-        public string message { get; set; }
-        public CategoryGetModel data { get; set; }
     }
 }
